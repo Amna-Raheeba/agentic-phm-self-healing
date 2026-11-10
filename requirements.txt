@@ -1,0 +1,9 @@
+# Core pipeline: no hard dependencies (stdlib only) — it runs anywhere.
+# Optional, for the LangGraph adapter / LLM extensions:
+# langgraph>=0.2
+# langchain-core
+# openai
+# Optional, for notebooks / analysis:
+# numpy
+# pandas
+pytest>=8.0  # dev / tests only
