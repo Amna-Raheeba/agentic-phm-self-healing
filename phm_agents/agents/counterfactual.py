@@ -2,11 +2,14 @@
 
 Generates concrete, costed interventions per top contributing sensor and
 estimates the RUL gain with the same heuristic the diagnosis used — so the
-numbers are internally consistent, if simplified.
+numbers are internally consistent, if simplified. Each plan is then also
+run through failure imagination (agents/failure_imagination.py) to get an
+imagined failure cycle per scenario.
 """
 from __future__ import annotations
 from ..config import Config
 from ..state import PHMState, Counterfactual
+from .failure_imagination import imagine_failures
 
 ACTIONS = {
     "vibration_mm_s": ("Inspect and replace bearing / re-balance rotor", 1200.0, 6.0),
@@ -35,6 +38,12 @@ def counterfactual_node(state: PHMState, config: Config | None = None) -> PHMSta
                       "estimated_cost_usd": 0.0, "downtime_h": 0.0,
                       "rationale": "Lower load slows degradation progression with no downtime; it buys time, it does not fix the fault."})
     state["counterfactuals"] = plans
+    # Failure imagination: roll the window forward under no action and under
+    # each plan, so the report can compare imagined failure cycles, not just
+    # point RUL gains. Stored on state; the report renders the summary.
+    state["failure_imagination"] = imagine_failures(
+        state["sensor_window"], plans, horizon=cfg.imagination_horizon_cycles,
+        failure_health=cfg.imagination_failure_health, baseline_cycles=cfg.baseline_cycles) if plans else []
     state["approval_required"] = bool(plans) and cfg.require_approval_for_high_risk
     if state["approval_required"] and state.get("approval_status") not in ("approved", "rejected"):
         state["approval_status"] = "pending"
