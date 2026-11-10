@@ -3,6 +3,22 @@
 All notable changes to this project, in my own words. Dates are when the
 work was done, not when it was tidied up for the repo.
 
+## v0.3.0 — 2026-11-10
+
+### Added
+- **Streamlit dashboard** (`dashboard/`), in the same role as the
+  dashboard in my FYP repo. It runs the live pipeline — no screenshots,
+  no hardcoded numbers — and shows the sensor window, health/RUL with
+  the conformal interval, contributing sensors, the counterfactual
+  table joined with failure-imagination outcomes, and the approval
+  disposition. An "Approve repair (demo)" toggle re-runs with an
+  approver so the human-in-the-loop gate is visible, not just
+  described. Data shaping lives in `dashboard/helpers.py` (no
+  Streamlit import) and is covered by
+  `tests/test_dashboard_helpers.py`. Streamlit stays a
+  dashboard-only optional extra; the core pipeline is still
+  standard-library only.
+
 ## v0.2.0 — 2026-11-09
 
 ### Added
