@@ -5,7 +5,49 @@
     "risk_score": 0.7729,
     "health_index": 0.2271,
     "rul_estimate_cycles": 20.6,
-    "diagnosis_summary": "Health index 0.23, estimated RUL 21 cycles, risk high (0.77). Main contributor: temperature_c.",
+    "rul_interval": {
+      "level": 0.9,
+      "lower": 0.0,
+      "upper": 93.7,
+      "half_width": 73.1,
+      "n_calibration": 120
+    },
+    "rul_interval_escalated": false,
+    "failure_imagination": [
+      {
+        "scenario": "no_action",
+        "action": "No action \u2014 continue as-is",
+        "imagined_failure_cycle": 9,
+        "cycles_bought": 0,
+        "health_at_horizon": 0.0,
+        "horizon_cycles": 120
+      },
+      {
+        "scenario": "repair:temperature_c",
+        "action": "Clean cooling path and replace thermal paste / coolant flush",
+        "imagined_failure_cycle": null,
+        "cycles_bought": null,
+        "health_at_horizon": 0.151,
+        "horizon_cycles": 120
+      },
+      {
+        "scenario": "repair:vibration_mm_s",
+        "action": "Inspect and replace bearing / re-balance rotor",
+        "imagined_failure_cycle": null,
+        "cycles_bought": null,
+        "health_at_horizon": 0.194,
+        "horizon_cycles": 120
+      },
+      {
+        "scenario": "repair:load_pct",
+        "action": "Reduce load by 15% until maintenance window",
+        "imagined_failure_cycle": 14,
+        "cycles_bought": 5,
+        "health_at_horizon": 0.0,
+        "horizon_cycles": 120
+      }
+    ],
+    "diagnosis_summary": "Health index 0.23, estimated RUL 21 cycles (90% prediction interval [0, 94]), risk high (0.77). Main contributor: temperature_c.",
     "anomalies": [
       {
         "sensor": "temperature_c",
@@ -79,21 +121,21 @@
     "disposition": "Repair authorised by cli-operator.",
     "data_note": "Synthetic sensor window (C-MAPSS-style degradation shape). Not real engine data."
   },
-  "report_markdown": "# PHM Report \u2014 demo-run\n\nHealth index 0.23, estimated RUL 21 cycles, risk high (0.77). Main contributor: temperature_c.\n\n**Disposition:** Repair authorised by cli-operator.\n\n## Counterfactual repair options\n- Clean cooling path and replace thermal paste / coolant flush (target: temperature_c, est. RUL gain ~43.7 cycles, $450, 3.0h downtime) \u2014 temperature_c accounts for the largest health loss (loss=0.794, z=19.797).\n- Inspect and replace bearing / re-balance rotor (target: vibration_mm_s, est. RUL gain ~42.0 cycles, $1200, 6.0h downtime) \u2014 vibration_mm_s accounts for the largest health loss (loss=0.764, z=26.415).\n- Reduce load by 15% until maintenance window (target: load_pct, est. RUL gain ~12.0 cycles, $0, 0.0h downtime) \u2014 Lower load slows degradation progression with no downtime; it buys time, it does not fix the fault.",
+  "report_markdown": "# PHM Report \u2014 demo-run\n\nHealth index 0.23, estimated RUL 21 cycles (90% prediction interval [0, 94]), risk high (0.77). Main contributor: temperature_c.\n\n**Disposition:** Repair authorised by cli-operator.\n\n## Counterfactual repair options\n- Clean cooling path and replace thermal paste / coolant flush (target: temperature_c, est. RUL gain ~43.7 cycles, $450, 3.0h downtime) \u2014 temperature_c accounts for the largest health loss (loss=0.794, z=19.797).\n- Inspect and replace bearing / re-balance rotor (target: vibration_mm_s, est. RUL gain ~42.0 cycles, $1200, 6.0h downtime) \u2014 vibration_mm_s accounts for the largest health loss (loss=0.764, z=26.415).\n- Reduce load by 15% until maintenance window (target: load_pct, est. RUL gain ~12.0 cycles, $0, 0.0h downtime) \u2014 Lower load slows degradation progression with no downtime; it buys time, it does not fix the fault.\n\n## Failure imagination (simulated trajectories)\n- No action \u2014 continue as-is: imagined failure at cycle +9; imagined health at horizon 0.0\n- Clean cooling path and replace thermal paste / coolant flush: no failure imagined within the 120-cycle horizon; imagined health at horizon 0.151\n- Inspect and replace bearing / re-balance rotor: no failure imagined within the 120-cycle horizon; imagined health at horizon 0.194\n- Reduce load by 15% until maintenance window: imagined failure at cycle +14 \u2014 buys ~5 cycles vs no action; imagined health at horizon 0.0",
   "trace": [
     {
       "node": "monitor",
-      "duration_ms": 0.34,
+      "duration_ms": 0.41,
       "step": 1
     },
     {
       "node": "diagnosis",
-      "duration_ms": 0.19,
+      "duration_ms": 83.4,
       "step": 2
     },
     {
       "node": "counterfactual",
-      "duration_ms": 0.02,
+      "duration_ms": 1.51,
       "step": 3
     },
     {
@@ -103,7 +145,7 @@
     },
     {
       "node": "report",
-      "duration_ms": 0.02,
+      "duration_ms": 0.04,
       "step": 4
     }
   ]
