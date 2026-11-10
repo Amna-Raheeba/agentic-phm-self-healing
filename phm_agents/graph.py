@@ -33,6 +33,7 @@ class PHMGraph:
         # Defaults for the branch that skips the counterfactual node, so
         # downstream consumers can rely on these keys always being present.
         state.setdefault("counterfactuals", [])
+        state.setdefault("failure_imagination", [])
         state.setdefault("approval_required", False)
         state.setdefault("approval_status", "not_required")
         state = self._run_node("monitor", lambda s: monitor_node(s, self.config), state)
