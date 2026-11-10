@@ -56,8 +56,9 @@ python -m phm_agents --auto-approve --output examples/demo_output.json   # fault
 python -m phm_agents --healthy                                           # healthy run
 python -m phm_agents --input phm_agents/data/sample_run.csv --approve    # prompt for approval
 
-pip install pytest && pytest -q                                          # 17 tests
+pip install pytest && pytest -q                                          # tests
 python -m phm_agents.evaluation.evaluate                                 # detection metrics
+pip install streamlit && streamlit run dashboard/app.py                  # dashboard (optional, dashboard-only dependency)
 ```
 
 **Sample demo result** (synthetic run, `--auto-approve`): health index 0.23, RUL ≈ 21 cycles (90% prediction interval [0, 94]), risk **high** — top contributors temperature, vibration, pressure; cheapest counterfactual: cooling-path service ($450, 3h). Failure imagination: no action fails at +9 cycles, both repairs survive the 120-cycle horizon. Full output: [`examples/demo_output.json`](examples/demo_output.json).
@@ -74,6 +75,7 @@ phm_agents/
 ├── data/                       # seeded synthetic generator + sample_run.csv
 └── evaluation/                 # precision / recall on labelled synthetic runs
 notebooks/ · results/           # numbered experiment scripts · coverage CSV, interval plot
+dashboard/                      # Streamlit dashboard over live pipeline runs (see dashboard/README.md)
 docs/experiment_log.md          # what was tried, what happened, what I decided
 tests/                          # generator · RUL model · conformal · failure imagination · graph end-to-end
 ```
