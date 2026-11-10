@@ -1,0 +1,110 @@
+{
+  "report": {
+    "run_id": "demo-run",
+    "risk_level": "high",
+    "risk_score": 0.7729,
+    "health_index": 0.2271,
+    "rul_estimate_cycles": 20.6,
+    "diagnosis_summary": "Health index 0.23, estimated RUL 21 cycles, risk high (0.77). Main contributor: temperature_c.",
+    "anomalies": [
+      {
+        "sensor": "temperature_c",
+        "z": 19.797,
+        "latest_mean": 658.458,
+        "baseline_mean": 612.155
+      },
+      {
+        "sensor": "vibration_mm_s",
+        "z": 26.415,
+        "latest_mean": 7.8556,
+        "baseline_mean": 2.995
+      },
+      {
+        "sensor": "pressure_kpa",
+        "z": -16.424,
+        "latest_mean": 1419.039,
+        "baseline_mean": 1480.2246
+      }
+    ],
+    "contributing_sensors": [
+      {
+        "sensor": "temperature_c",
+        "loss": 0.794,
+        "z": 19.797,
+        "slope_per_cycle": 0.5874
+      },
+      {
+        "sensor": "vibration_mm_s",
+        "loss": 0.764,
+        "z": 26.415,
+        "slope_per_cycle": 0.06238
+      },
+      {
+        "sensor": "pressure_kpa",
+        "loss": 0.761,
+        "z": -16.424,
+        "slope_per_cycle": -0.81883
+      }
+    ],
+    "counterfactuals": [
+      {
+        "action": "Clean cooling path and replace thermal paste / coolant flush",
+        "target_sensor": "temperature_c",
+        "expected_change_pct": -47.6,
+        "estimated_rul_gain_cycles": 43.7,
+        "estimated_cost_usd": 450.0,
+        "downtime_h": 3.0,
+        "rationale": "temperature_c accounts for the largest health loss (loss=0.794, z=19.797)."
+      },
+      {
+        "action": "Inspect and replace bearing / re-balance rotor",
+        "target_sensor": "vibration_mm_s",
+        "expected_change_pct": -45.8,
+        "estimated_rul_gain_cycles": 42.0,
+        "estimated_cost_usd": 1200.0,
+        "downtime_h": 6.0,
+        "rationale": "vibration_mm_s accounts for the largest health loss (loss=0.764, z=26.415)."
+      },
+      {
+        "action": "Reduce load by 15% until maintenance window",
+        "target_sensor": "load_pct",
+        "expected_change_pct": -15.0,
+        "estimated_rul_gain_cycles": 12.0,
+        "estimated_cost_usd": 0.0,
+        "downtime_h": 0.0,
+        "rationale": "Lower load slows degradation progression with no downtime; it buys time, it does not fix the fault."
+      }
+    ],
+    "approval_status": "approved",
+    "disposition": "Repair authorised by cli-operator.",
+    "data_note": "Synthetic sensor window (C-MAPSS-style degradation shape). Not real engine data."
+  },
+  "report_markdown": "# PHM Report \u2014 demo-run\n\nHealth index 0.23, estimated RUL 21 cycles, risk high (0.77). Main contributor: temperature_c.\n\n**Disposition:** Repair authorised by cli-operator.\n\n## Counterfactual repair options\n- Clean cooling path and replace thermal paste / coolant flush (target: temperature_c, est. RUL gain ~43.7 cycles, $450, 3.0h downtime) \u2014 temperature_c accounts for the largest health loss (loss=0.794, z=19.797).\n- Inspect and replace bearing / re-balance rotor (target: vibration_mm_s, est. RUL gain ~42.0 cycles, $1200, 6.0h downtime) \u2014 vibration_mm_s accounts for the largest health loss (loss=0.764, z=26.415).\n- Reduce load by 15% until maintenance window (target: load_pct, est. RUL gain ~12.0 cycles, $0, 0.0h downtime) \u2014 Lower load slows degradation progression with no downtime; it buys time, it does not fix the fault.",
+  "trace": [
+    {
+      "node": "monitor",
+      "duration_ms": 0.34,
+      "step": 1
+    },
+    {
+      "node": "diagnosis",
+      "duration_ms": 0.19,
+      "step": 2
+    },
+    {
+      "node": "counterfactual",
+      "duration_ms": 0.02,
+      "step": 3
+    },
+    {
+      "node": "human_approval",
+      "duration_ms": 0.0,
+      "status": "approved"
+    },
+    {
+      "node": "report",
+      "duration_ms": 0.02,
+      "step": 4
+    }
+  ]
+}
