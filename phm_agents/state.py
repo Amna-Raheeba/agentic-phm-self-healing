@@ -25,6 +25,9 @@ class PHMState(TypedDict, total=False):
     anomalies: list[dict[str, Any]]
     health_index: float
     rul_estimate_cycles: float
+    rul_interval: dict[str, Any]  # split-conformal interval: level/lower/upper/half_width
+    rul_interval_escalated: bool  # interval lower bound at/below the alert RUL while point estimate is above it
+    failure_imagination: list[dict[str, Any]]  # imagined failure cycle per scenario
     risk_score: float
     risk_level: str  # low | medium | high | critical
     contributing_sensors: list[dict[str, Any]]
