@@ -1,0 +1,4 @@
+level,half_width,n_calibration,n_test,empirical_coverage
+0.8,69.3,120,80,0.912
+0.9,73.1,120,80,0.938
+0.95,78.3,120,80,0.975
