@@ -35,8 +35,8 @@ flowchart LR
 | Agent | Responsibility |
 |---|---|
 | **Monitor** | Validates the sensor window; computes baseline-vs-latest stats, slope, z-scores; flags anomalies |
-| **Diagnosis** | Estimates RUL, assigns a risk level, ranks the sensors contributing most to health loss |
-| **Counterfactual Planner** | High/critical risk only: costed repair options with estimated RUL gain, plus a no-downtime load-reduction option |
+| **Diagnosis** | Estimates RUL with a split-conformal prediction interval, assigns a risk level, ranks the sensors contributing most to health loss |
+| **Counterfactual Planner** | High/critical risk only: costed repair options with estimated RUL gain, a no-downtime load-reduction option, and a failure-imagination roll-forward per option |
 | **Report** | Auditable final report (JSON + Markdown) stating the approval disposition explicitly |
 
 ### 2.3 Key concepts
@@ -45,6 +45,8 @@ flowchart LR
 - **Explainability** — contributing sensors are ranked by per-sensor health loss, in the spirit of the SHAP attributions in my FYP, computed directly from the estimator so report numbers always match the diagnosis.
 - **Two graph runners, one state** — `graph.py` is a pure-Python runner (zero dependencies); `graph_langgraph.py` wires the same nodes into a real LangGraph `StateGraph`. Both share the `TypedDict` state in `state.py`.
 - **Guardrails** — one retry on diagnosis, a `max_steps` limit, and a minimum window length.
+- **Split-conformal RUL intervals** — the point estimate is wrapped in a calibrated prediction interval (`tools/conformal.py`, absolute-residual split conformal on held-out generated assets). If the interval's lower bound is inside the alert window while the point estimate is not, the report escalates: plan on the worst case, not the point. Coverage and the estimator's bias are measured openly in `results/conformal_coverage.csv`.
+- **Failure imagination** — the counterfactual step simulates the next 120 cycles under no action and under each repair (repair resets its target sensor toward baseline), and reports the imagined failure cycle per scenario — the "failure imagination" idea from my FYP, as a pipeline step.
 
 ## 3. Quick Start
 
@@ -54,11 +56,11 @@ python -m phm_agents --auto-approve --output examples/demo_output.json   # fault
 python -m phm_agents --healthy                                           # healthy run
 python -m phm_agents --input phm_agents/data/sample_run.csv --approve    # prompt for approval
 
-pip install pytest && pytest -q                                          # 8 tests
+pip install pytest && pytest -q                                          # 17 tests
 python -m phm_agents.evaluation.evaluate                                 # detection metrics
 ```
 
-**Sample demo result** (synthetic run, `--auto-approve`): health index 0.23, RUL ≈ 21 cycles, risk **high** — top contributors temperature, vibration, pressure; cheapest counterfactual: cooling-path service ($450, 3h). Full output: [`examples/demo_output.json`](examples/demo_output.json).
+**Sample demo result** (synthetic run, `--auto-approve`): health index 0.23, RUL ≈ 21 cycles (90% prediction interval [0, 94]), risk **high** — top contributors temperature, vibration, pressure; cheapest counterfactual: cooling-path service ($450, 3h). Failure imagination: no action fails at +9 cycles, both repairs survive the 120-cycle horizon. Full output: [`examples/demo_output.json`](examples/demo_output.json).
 
 ## 4. Project Structure
 
@@ -67,11 +69,13 @@ phm_agents/
 ├── state.py / config.py        # shared TypedDict state · env-based config
 ├── graph.py                    # pure-Python graph runner (retry + step guard)
 ├── graph_langgraph.py          # optional LangGraph adapter, same nodes
-├── agents/                     # monitor · diagnosis · counterfactual · report
-├── tools/                      # sensor statistics · heuristic RUL estimator
+├── agents/                     # monitor · diagnosis · counterfactual · failure imagination · report
+├── tools/                      # sensor statistics · heuristic RUL estimator · conformal intervals
 ├── data/                       # seeded synthetic generator + sample_run.csv
 └── evaluation/                 # precision / recall on labelled synthetic runs
-tests/                          # generator · RUL model · graph end-to-end
+notebooks/ · results/           # numbered experiment scripts · coverage CSV, interval plot
+docs/experiment_log.md          # what was tried, what happened, what I decided
+tests/                          # generator · RUL model · conformal · failure imagination · graph end-to-end
 ```
 
 ## 5. Design Decisions
@@ -90,9 +94,9 @@ On 24 labelled synthetic runs (12 faulty / 12 healthy): **precision 1.00, recall
 
 ## 7. Limitations & Roadmap
 
-**Limitations:** synthetic, uncalibrated data · linear RUL heuristic with no uncertainty interval · counterfactual gains are internal-consistency estimates, costs are illustrative · single asset, single window.
+**Limitations:** synthetic, uncalibrated data · linear RUL heuristic whose conformal intervals are honest but wide (half-width ≈ 73 cycles at 90% — the estimator runs optimistic, see `docs/experiment_log.md`) · counterfactual gains and imagined failure cycles are internal-consistency estimates, costs are illustrative · single asset, single window.
 
-**Roadmap:** swap in the LSTM + SHAP model from my FYP behind the same estimator interface and evaluate on real C-MAPSS FD001 · uncertainty-aware risk before the approval gate · streaming monitor with persistent run history.
+**Roadmap:** swap in the LSTM + SHAP model from my FYP behind the same estimator interface and evaluate on real C-MAPSS FD001 · a slope-aware loss rate to cut the estimator bias the conformal experiment exposed · streaming monitor with persistent run history. ~~Uncertainty-aware risk before the approval gate~~ — done in v0.2.0 (split-conformal intervals + escalation).
 
 ## License
 
