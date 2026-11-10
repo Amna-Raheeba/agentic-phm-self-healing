@@ -1,0 +1,84 @@
+{
+  "window_cycles": 80,
+  "stats": {
+    "temperature_c": {
+      "baseline_mean": 612.155,
+      "baseline_std": 2.3389,
+      "latest_mean": 658.458,
+      "slope_per_cycle": 0.5874,
+      "z_latest": 19.797,
+      "max": 659.539,
+      "min": 605.712
+    },
+    "vibration_mm_s": {
+      "baseline_mean": 2.995,
+      "baseline_std": 0.184,
+      "latest_mean": 7.8556,
+      "slope_per_cycle": 0.06238,
+      "z_latest": 26.415,
+      "max": 8.37,
+      "min": 2.73
+    },
+    "pressure_kpa": {
+      "baseline_mean": 1480.2246,
+      "baseline_std": 3.7255,
+      "latest_mean": 1419.039,
+      "slope_per_cycle": -0.81883,
+      "z_latest": -16.424,
+      "max": 1495.984,
+      "min": 1412.683
+    },
+    "load_pct": {
+      "baseline_mean": 75.5882,
+      "baseline_std": 0.9966,
+      "latest_mean": 76.107,
+      "slope_per_cycle": 0.00051,
+      "z_latest": 0.521,
+      "max": 79.281,
+      "min": 70.378
+    }
+  },
+  "anomalies": [
+    {
+      "sensor": "temperature_c",
+      "z": 19.797,
+      "latest_mean": 658.458,
+      "baseline_mean": 612.155
+    },
+    {
+      "sensor": "vibration_mm_s",
+      "z": 26.415,
+      "latest_mean": 7.8556,
+      "baseline_mean": 2.995
+    },
+    {
+      "sensor": "pressure_kpa",
+      "z": -16.424,
+      "latest_mean": 1419.039,
+      "baseline_mean": 1480.2246
+    }
+  ],
+  "health_index": 0.2271,
+  "rul_cycles": 20.6,
+  "risk_score": 0.7729,
+  "contributing": [
+    {
+      "sensor": "temperature_c",
+      "loss": 0.794,
+      "z": 19.797,
+      "slope_per_cycle": 0.5874
+    },
+    {
+      "sensor": "vibration_mm_s",
+      "loss": 0.764,
+      "z": 26.415,
+      "slope_per_cycle": 0.06238
+    },
+    {
+      "sensor": "pressure_kpa",
+      "loss": 0.761,
+      "z": -16.424,
+      "slope_per_cycle": -0.81883
+    }
+  ]
+}
