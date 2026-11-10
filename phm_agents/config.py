@@ -14,6 +14,16 @@ class Config:
     max_retries: int = 1
     require_approval_for_high_risk: bool = True
     seed: int = 42
+    # Split-conformal RUL intervals (tools/conformal.py).
+    conformal_level: float = 0.90
+    conformal_calibration_runs: int = 120
+    conformal_seed: int = 2026
+    # An interval lower bound at or below this many cycles is treated as
+    # urgent for planning, even when the point estimate is above it.
+    rul_alert_cycles: float = 30.0
+    # Failure imagination (agents/failure_imagination.py).
+    imagination_horizon_cycles: int = 120
+    imagination_failure_health: float = 0.10
 
     @classmethod
     def from_env(cls) -> "Config":
@@ -25,4 +35,6 @@ class Config:
             c.seed = int(v)
         if v := os.getenv("PHM_REQUIRE_APPROVAL"):
             c.require_approval_for_high_risk = v.lower() not in ("0", "false", "no")
+        if v := os.getenv("PHM_CONFORMAL_LEVEL"):
+            c.conformal_level = float(v)
         return c
